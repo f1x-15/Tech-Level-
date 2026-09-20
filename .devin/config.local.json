@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Exec(mkdir components)",
+      "Exec(mkdir)",
+      "Exec(npm install)",
+      "Exec(rmdir)",
+      "Exec(npm run)"
+    ]
+  }
+}
