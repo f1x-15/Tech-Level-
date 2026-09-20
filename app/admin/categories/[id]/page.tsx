@@ -5,15 +5,20 @@ import CategoryForm from '@/components/admin/CategoryForm';
 import { notFound } from 'next/navigation';
 
 async function getCategory(id: string) {
-  await connectDB();
-  
-  const category = await Category.findById(id).lean();
-  
-  if (!category) {
+  try {
+    await connectDB();
+    
+    const category = await Category.findById(id).lean();
+    
+    if (!category) {
+      return null;
+    }
+      
+    return category;
+  } catch (error) {
+    // Return null if DB not connected
     return null;
   }
-    
-  return category;
 }
 
 export default async function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {

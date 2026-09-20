@@ -1,18 +1,23 @@
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import connectDB from '@/lib/mongodb';
 import QuoteRequest from '@/models/QuoteRequest';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 async function getQuote(id: string) {
-  await connectDB();
-  
-  const quote = await QuoteRequest.findById(id).lean();
-  
-  if (!quote) {
+  try {
+    await connectDB();
+    
+    const quote = await QuoteRequest.findById(id).lean();
+    
+    if (!quote) {
+      return null;
+    }
+      
+    return quote;
+  } catch (error) {
+    // Return null if DB not connected
     return null;
   }
-    
-  return quote;
 }
 
 export default async function QuoteDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -26,10 +31,14 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
   async function updateStatus(formData: FormData) {
     'use server';
     
-    await connectDB();
-    const status = formData.get('status') as string;
-    
-    await QuoteRequest.findByIdAndUpdate(id, { status });
+    try {
+      await connectDB();
+      const status = formData.get('status') as string;
+      
+      await QuoteRequest.findByIdAndUpdate(id, { status });
+    } catch (error) {
+      console.error('Error updating quote status:', error);
+    }
     
     redirect(`/admin/quotes/${id}`);
   }

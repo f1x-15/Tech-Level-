@@ -4,13 +4,18 @@ import Category from '@/models/Category';
 import ProductForm from '@/components/admin/ProductForm';
 
 async function getCategories() {
-  await connectDB();
-  
-  const categories = await Category.find({ active: true })
-    .sort({ name: 1 })
-    .lean();
+  try {
+    await connectDB();
     
-  return categories;
+    const categories = await Category.find({ active: true })
+      .sort({ name: 1 })
+      .lean();
+      
+    return categories;
+  } catch (error) {
+    // Return empty array if DB not connected
+    return [];
+  }
 }
 
 export default async function NewProductPage() {

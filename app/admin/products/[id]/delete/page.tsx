@@ -1,18 +1,23 @@
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import connectDB from '@/lib/mongodb';
 import Product from '@/models/Product';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 async function getProduct(id: string) {
-  await connectDB();
-  
-  const product = await Product.findById(id).lean();
-  
-  if (!product) {
+  try {
+    await connectDB();
+    
+    const product = await Product.findById(id).lean();
+    
+    if (!product) {
+      return null;
+    }
+      
+    return product;
+  } catch (error) {
+    // Return null if DB not connected
     return null;
   }
-    
-  return product;
 }
 
 export default async function DeleteProductPage({ params }: { params: Promise<{ id: string }> }) {
@@ -26,8 +31,12 @@ export default async function DeleteProductPage({ params }: { params: Promise<{ 
   async function handleDelete() {
     'use server';
     
-    await connectDB();
-    await Product.findByIdAndDelete(id);
+    try {
+      await connectDB();
+      await Product.findByIdAndDelete(id);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
     
     redirect('/admin/products');
   }

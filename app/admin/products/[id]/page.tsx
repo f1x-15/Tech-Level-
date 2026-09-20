@@ -6,25 +6,35 @@ import ProductForm from '@/components/admin/ProductForm';
 import { notFound } from 'next/navigation';
 
 async function getProduct(id: string) {
-  await connectDB();
-  
-  const product = await Product.findById(id).populate('category').lean();
-  
-  if (!product) {
+  try {
+    await connectDB();
+    
+    const product = await Product.findById(id).populate('category').lean();
+    
+    if (!product) {
+      return null;
+    }
+      
+    return product;
+  } catch (error) {
+    // Return null if DB not connected
     return null;
   }
-    
-  return product;
 }
 
 async function getCategories() {
-  await connectDB();
-  
-  const categories = await Category.find({ active: true })
-    .sort({ name: 1 })
-    .lean();
+  try {
+    await connectDB();
     
-  return categories;
+    const categories = await Category.find({ active: true })
+      .sort({ name: 1 })
+      .lean();
+      
+    return categories;
+  } catch (error) {
+    // Return empty array if DB not connected
+    return [];
+  }
 }
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {

@@ -1,18 +1,23 @@
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import connectDB from '@/lib/mongodb';
 import Category from '@/models/Category';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 async function getCategory(id: string) {
-  await connectDB();
-  
-  const category = await Category.findById(id).lean();
-  
-  if (!category) {
+  try {
+    await connectDB();
+    
+    const category = await Category.findById(id).lean();
+    
+    if (!category) {
+      return null;
+    }
+      
+    return category;
+  } catch (error) {
+    // Return null if DB not connected
     return null;
   }
-    
-  return category;
 }
 
 export default async function DeleteCategoryPage({ params }: { params: Promise<{ id: string }> }) {
@@ -26,8 +31,12 @@ export default async function DeleteCategoryPage({ params }: { params: Promise<{
   async function handleDelete() {
     'use server';
     
-    await connectDB();
-    await Category.findByIdAndDelete(id);
+    try {
+      await connectDB();
+      await Category.findByIdAndDelete(id);
+    } catch (error) {
+      console.error('Error deleting category:', error);
+    }
     
     redirect('/admin/categories');
   }

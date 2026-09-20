@@ -1,18 +1,23 @@
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import connectDB from '@/lib/mongodb';
 import ContactMessage from '@/models/ContactMessage';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 async function getMessage(id: string) {
-  await connectDB();
-  
-  const message = await ContactMessage.findById(id).lean();
-  
-  if (!message) {
+  try {
+    await connectDB();
+    
+    const message = await ContactMessage.findById(id).lean();
+    
+    if (!message) {
+      return null;
+    }
+      
+    return message;
+  } catch (error) {
+    // Return null if DB not connected
     return null;
   }
-    
-  return message;
 }
 
 export default async function MessageDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -26,10 +31,14 @@ export default async function MessageDetailPage({ params }: { params: Promise<{ 
   async function updateStatus(formData: FormData) {
     'use server';
     
-    await connectDB();
-    const status = formData.get('status') as string;
-    
-    await ContactMessage.findByIdAndUpdate(id, { status });
+    try {
+      await connectDB();
+      const status = formData.get('status') as string;
+      
+      await ContactMessage.findByIdAndUpdate(id, { status });
+    } catch (error) {
+      console.error('Error updating message status:', error);
+    }
     
     redirect(`/admin/messages/${id}`);
   }
