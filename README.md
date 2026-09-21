@@ -2,6 +2,8 @@
 
 A complete, production-ready Next.js website for Tech Level Engineering - a commercial kitchen equipment and engineering company based in Pakistan.
 
+<!-- Build fix applied -->
+
 ## Features
 
 - **Public Website**
