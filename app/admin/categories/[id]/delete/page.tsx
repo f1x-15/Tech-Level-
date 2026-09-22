@@ -1,7 +1,7 @@
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import connectDB from '@/lib/mongodb';
 import Category from '@/models/Category';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 async function getCategory(id: string) {
   try {
@@ -30,6 +30,7 @@ export default async function DeleteCategoryPage({ params }: { params: Promise<{
 
   async function handleDelete() {
     'use server';
+    const { redirect } = await import('next/navigation');
     
     try {
       await connectDB();

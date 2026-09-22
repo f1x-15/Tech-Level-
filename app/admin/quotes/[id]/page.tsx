@@ -1,7 +1,7 @@
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import connectDB from '@/lib/mongodb';
 import QuoteRequest from '@/models/QuoteRequest';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 async function getQuote(id: string) {
   try {
@@ -30,6 +30,7 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
 
   async function updateStatus(formData: FormData) {
     'use server';
+    const { redirect } = await import('next/navigation');
     
     try {
       await connectDB();
