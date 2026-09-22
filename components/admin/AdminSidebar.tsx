@@ -42,7 +42,7 @@ export default function AdminSidebar() {
         <div className="p-4">
           <div className="flex items-center space-x-2 mb-6">
             <img 
-              src="/favicon.webp" 
+              src="/favicon.ico" 
               alt="Tech Level Engineering" 
               className="w-8 h-8 object-contain"
             />
